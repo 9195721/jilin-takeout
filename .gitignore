@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.local
+.env.*.local
+.env.vercel
+.vercel/
+# 非项目文件
+skills/
+outputs/
+.microcompact/
+.plan/
+.assets_mapping/
+dist.tar.gz/
+
