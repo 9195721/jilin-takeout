@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
 
 module.exports = (env, argv) => {
   const isDev = argv.mode !== 'production';
@@ -54,10 +53,6 @@ module.exports = (env, argv) => {
       }
     },
     plugins: [
-      new webpack.DefinePlugin({
-        'process.env.COS_SECRET_ID': JSON.stringify(process.env.COS_SECRET_ID || ''),
-        'process.env.COS_SECRET_KEY': JSON.stringify(process.env.COS_SECRET_KEY || ''),
-      }),
       new HtmlWebpackPlugin({
         template: './index.html',
         inject: 'body'

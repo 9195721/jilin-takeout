@@ -15,3 +15,5 @@ outputs/
 .assets_mapping/
 dist.tar.gz/
 
+
+.vercel
