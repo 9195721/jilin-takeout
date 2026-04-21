@@ -8,6 +8,9 @@ type Merchant = Database['public']['Tables']['merchants']['Row'] & {
   member_level: Database['public']['Tables']['member_levels']['Row'] | null;
 };
 
+// 吉林市区域列表
+const DISTRICTS = ['船营', '昌邑', '丰满', '高新'];
+
 const SkeletonMerchantCard = () => (
   <div className="bg-slate-800 rounded-2xl overflow-hidden animate-pulse">
     <div className="w-full h-36 bg-slate-700"></div>
@@ -25,12 +28,11 @@ const SkeletonMerchantCard = () => (
 const ConsumerMerchants: React.FC = () => {
   const [searchParams] = useSearchParams();
   const categoryId = searchParams.get('category');
-  
+
   const [merchants, setMerchants] = useState<Merchant[]>([]);
-  const [categories, setCategories] = useState<
-    Database['public']['Tables']['categories']['Row'][]
-  >([]);
+  const [categories, setCategories] = useState<Database['public']['Tables']['categories']['Row'][]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryId);
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'views' | 'rating' | 'sales'>('views');
 
@@ -39,18 +41,12 @@ const ConsumerMerchants: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (categories.length > 0) {
-      fetchMerchants();
-    }
-  }, [categories, selectedCategory, sortBy]);
+    if (categories.length > 0) fetchMerchants();
+  }, [categories, selectedCategory, selectedDistrict, sortBy]);
 
   const fetchCategories = async () => {
     try {
-      const { data } = await supabase
-        .from('categories')
-        .select('*')
-        .order('sort_order', { ascending: true });
-
+      const { data } = await supabase.from('categories').select('*').order('sort_order', { ascending: true });
       setCategories(data || []);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
@@ -62,19 +58,14 @@ const ConsumerMerchants: React.FC = () => {
     try {
       let query = supabase
         .from('merchants')
-        .select(`
-          *,
-          member_level:member_level_id (
-            id,
-            name,
-            icon,
-            color
-          )
-        `)
+        .select(`*, member_level:member_level_id (id, name, icon, color)`)
         .eq('status', 'approved');
 
       if (selectedCategory) {
         query = query.eq('category_id', parseInt(selectedCategory));
+      }
+      if (selectedDistrict) {
+        query = query.eq('district', selectedDistrict);
       }
 
       const { data } = await query.order(sortBy, { ascending: false });
@@ -87,9 +78,9 @@ const ConsumerMerchants: React.FC = () => {
   };
 
   const sortOptions = [
-    { key: 'views', label: '人气', icon: 'fa-fire' },
-    { key: 'rating', label: '评分', icon: 'fa-star' },
-    { key: 'sales', label: '销量', icon: 'fa-shopping-bag' },
+    { key: 'views' as const, label: '人气', icon: 'fa-fire' },
+    { key: 'rating' as const, label: '评分', icon: 'fa-star' },
+    { key: 'sales' as const, label: '销量', icon: 'fa-shopping-bag' },
   ];
 
   if (loading && merchants.length === 0) {
@@ -102,9 +93,7 @@ const ConsumerMerchants: React.FC = () => {
           ))}
         </div>
         <div className="grid grid-cols-2 gap-3">
-          {[...Array(6)].map((_, i) => (
-            <SkeletonMerchantCard key={i} />
-          ))}
+          {[...Array(6)].map((_, i) => <SkeletonMerchantCard key={i} />)}
         </div>
       </div>
     );
@@ -112,175 +101,146 @@ const ConsumerMerchants: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      <motion.h1
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="text-2xl font-bold text-white mb-6"
-      >
+      <motion.h1 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-2xl font-bold text-white mb-6">
         商家列表
       </motion.h1>
 
-      {/* 分类筛选 */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-4 overflow-x-auto scrollbar-thin"
-      >
+      {/* 分类筛选栏 */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-3 overflow-x-auto scrollbar-thin">
         <div className="flex space-x-2 pb-2">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setSelectedCategory(null)}
+          <motion.button whileTap={{ scale: 0.95 }} onClick={() => setSelectedCategory(null)}
             className={`px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm font-medium ${
-              !selectedCategory
-                ? 'bg-blue-500 text-white shadow-md'
-                : 'bg-slate-700 text-white/70 hover:bg-slate-600'
+              !selectedCategory ? 'bg-blue-500 text-white shadow-md' : 'bg-slate-700 text-white/70 hover:bg-slate-600'
             }`}
           >
             全部
           </motion.button>
-          {categories.map((category) => (
-            <motion.button
-              key={category.id}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCategory(category.id.toString())}
+          {categories.map((cat) => (
+            <motion.button key={cat.id} whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedCategory(cat.id.toString())}
               className={`px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm font-medium flex items-center space-x-1 ${
-                selectedCategory === category.id.toString()
-                  ? 'bg-blue-500 text-white shadow-md'
-                  : 'bg-slate-700 text-white/70 hover:bg-slate-600'
+                selectedCategory === cat.id.toString() ? 'bg-blue-500 text-white shadow-md' : 'bg-slate-700 text-white/70 hover:bg-slate-600'
               }`}
             >
-              <span>{category.icon}</span>
-              <span>{category.name}</span>
+              <span>{cat.icon}</span><span>{cat.name}</span>
+            </motion.button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* 区域筛选栏 */}
+      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-4 overflow-x-auto scrollbar-thin">
+        <div className="flex space-x-2 pb-2">
+          <span className="text-xs text-white/40 self-center mr-1 flex items-center"><i className="fas fa-map-marker-alt mr-1"></i>区域</span>
+          <motion.button whileTap={{ scale: 0.95 }} onClick={() => setSelectedDistrict(null)}
+            className={`px-3 py-1.5 rounded-full whitespace-nowrap transition-all text-xs font-medium ${
+              !selectedDistrict ? 'bg-emerald-500/80 text-white shadow-md' : 'bg-slate-700/60 text-white/60 hover:bg-slate-600'
+            }`}
+          >
+            全部
+          </motion.button>
+          {DISTRICTS.map((d) => (
+            <motion.button key={d} whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedDistrict(d)}
+              className={`px-3 py-1.5 rounded-full whitespace-nowrap transition-all text-xs font-medium ${
+                selectedDistrict === d ? 'bg-emerald-500/80 text-white shadow-md' : 'bg-slate-700/60 text-white/60 hover:bg-slate-600'
+              }`}
+            >
+              {d}
             </motion.button>
           ))}
         </div>
       </motion.div>
 
       {/* 排序选项 */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex space-x-2 mb-6"
-      >
-        {sortOptions.map((option) => (
-          <motion.button
-            key={option.key}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setSortBy(option.key as any)}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex space-x-2 mb-6">
+        {sortOptions.map((opt) => (
+          <motion.button key={opt.key} whileTap={{ scale: 0.95 }} onClick={() => setSortBy(opt.key)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center space-x-1 ${
-              sortBy === option.key
-                ? 'bg-blue-100 text-blue-600'
-                : 'bg-slate-700 text-white/60 hover:bg-slate-600'
+              sortBy === opt.key ? 'bg-blue-100 text-blue-600' : 'bg-slate-700 text-white/60 hover:bg-slate-600'
             }`}
           >
-            <i className={`fas ${option.icon}`}></i>
-            <span>{option.label}</span>
+            <i className={`fas ${opt.icon}`}></i><span>{opt.label}</span>
           </motion.button>
         ))}
       </motion.div>
 
-      {/* 商家列表 */}
+      {/* 商家列表网格 */}
       <AnimatePresence mode="wait">
         <div className="grid grid-cols-2 gap-3">
           {merchants.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="col-span-2 text-center py-16 text-white/50 bg-slate-800 rounded-2xl"
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }} className="col-span-2 text-center py-16 text-white/50 bg-slate-800 rounded-2xl"
             >
               <i className="fas fa-store-slash text-6xl mb-4"></i>
               <p className="text-lg font-medium">暂无商家</p>
-              <p className="text-sm mt-2">试试其他分类吧</p>
+              <p className="text-sm mt-2">试试其他分类或区域吧</p>
             </motion.div>
-          ) : (
-            merchants.map((merchant, index) => (
-              <motion.div
-                key={merchant.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ delay: index * 0.05 }}
-                layout
-              >
-                <Link to={`/merchants/${merchant.id}`}>
-                  <motion.div
-                    whileHover={{ y: -2, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                    className={`bg-slate-800 rounded-2xl overflow-hidden shadow-lg transition-all group ${(merchant.is_open === false) ? 'opacity-60' : ''}`}
-                  >
-                    {/* 封面图（全宽纵向） */}
-                    <div className="w-full h-36 bg-gradient-to-br from-slate-700 to-slate-800 relative overflow-hidden">
-                      {merchant.cover_image ? (
-                        <img
-                          src={merchant.cover_image}
-                          alt={merchant.shop_name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          loading="lazy"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                        />
+          ) : merchants.map((merchant, index) => (
+            <motion.div key={merchant.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }} transition={{ delay: index * 0.05 }} layout
+            >
+              <Link to={`/merchants/${merchant.id}`}>
+                <motion.div whileHover={{ y: -2, boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)' }}
+                  className={`bg-slate-800 rounded-2xl overflow-hidden shadow-lg transition-all group ${(merchant.is_open === false) ? 'opacity-60' : ''}`}
+                >
+                  {/* 封面图 */}
+                  <div className="w-full h-36 bg-gradient-to-br from-slate-700 to-slate-800 relative overflow-hidden">
+                    {merchant.cover_image ? (
+                      <img src={merchant.cover_image} alt={merchant.shop_name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-500"><i className="fas fa-store text-3xl"></i></div>
+                    )}
+
+                    {/* 营业状态角标 */}
+                    <div className="absolute top-1.5 left-1.5 flex flex-col gap-0.5">
+                      {(merchant.is_open === false) ? (
+                        <span className="px-1.5 py-0.5 rounded-full text-[9px] text-white flex items-center space-x-0.5 bg-gray-600/90 shadow-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span><span>休息中</span>
+                        </span>
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-500">
-                          <i className="fas fa-store text-3xl"></i>
-                        </div>
+                        <span className="px-1.5 py-0.5 rounded-full text-[9px] text-white flex items-center space-x-0.5 bg-green-600/90 shadow-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span><span>营业中</span>
+                        </span>
                       )}
-                      {/* 营业状态 + 送货上门角标 */}
-                      <div className="absolute top-1.5 left-1.5 flex flex-col gap-0.5">
-                        {(merchant.is_open === false) ? (
-                          <span className="px-1.5 py-0.5 rounded-full text-[9px] text-white flex items-center space-x-0.5 bg-gray-600/90 shadow-sm">
-                            <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                            <span>休息中</span>
-                          </span>
-                        ) : (
-                          <span className="px-1.5 py-0.5 rounded-full text-[9px] text-white flex items-center space-x-0.5 bg-green-600/90 shadow-sm">
-                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                            <span>营业中</span>
-                          </span>
-                        )}
-                        {merchant.is_delivery && (
-                          <span className="px-1.5 py-0.5 rounded-full text-[9px] text-white flex items-center space-x-0.5 bg-blue-600/90 shadow-sm">
-                            <i className="fas fa-truck text-[8px]"></i>
-                            <span>送货上门</span>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    {/* 底部信息区 */}
-                    <div className="p-3">
-                      <div className="flex items-start justify-between mb-1.5">
-                        <h3 className="font-bold text-white text-sm group-hover:text-white/80 transition-colors line-clamp-1 flex-1 mr-1">
-                          {merchant.shop_name}
-                        </h3>
-                        {merchant.member_level && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="px-1.5 py-0.5 rounded-full text-[10px] text-white flex items-center flex-shrink-0"
-                            style={{ backgroundColor: merchant.member_level.color }}
-                          >
-                            <span>{merchant.member_level.icon}</span>
-                          </motion.div>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-3 text-xs text-white/70 mb-1.5">
-                        <span className="flex items-center text-orange-500 font-medium">
-                          <i className="fas fa-star mr-0.5"></i>
-                          {merchant.rating?.toFixed(1) || '0.0'}
+                      {merchant.is_delivery && (
+                        <span className="px-1.5 py-0.5 rounded-full text-[9px] text-white flex items-center space-x-0.5 bg-blue-600/90 shadow-sm">
+                          <i className="fas fa-truck text-[8px]"></i><span>送货上门</span>
                         </span>
-                        <span className="flex items-center">
-                          <i className="fas fa-shopping-bag text-blue-400 mr-0.5"></i>
-                          {merchant.sales_count || 0}单
-                        </span>
-                      </div>
-                      <p className="text-xs text-white/50 line-clamp-1 flex items-center">
-                        <i className="fas fa-map-marker-alt mr-1 text-red-400 flex-shrink-0"></i>
-                        <span className="truncate">{merchant.address}</span>
-                      </p>
+                      )}
                     </div>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            ))
-          )}
+
+                    {/* 区域标签 */}
+                    {merchant.district && (
+                      <span className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full text-[9px] text-white/80 bg-black/40 backdrop-blur-sm border border-white/10">
+                        📍{merchant.district}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 底部信息 */}
+                  <div className="p-3">
+                    <div className="flex items-start justify-between mb-1.5">
+                      <h3 className="font-bold text-white text-sm group-hover:text-white/80 transition-colors line-clamp-1 flex-1 mr-1">{merchant.shop_name}</h3>
+                      {merchant.member_level && (
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
+                          className="px-1.5 py-0.5 rounded-full text-[10px] text-white flex items-center flex-shrink-0" style={{ backgroundColor: merchant.member_level.color }}
+                        ><span>{merchant.member_level.icon}</span></motion.div>
+                      )}
+                    </div>
+                    <div className="flex items-center space-x-3 text-xs text-white/70 mb-1.5">
+                      <span className="flex items-center text-orange-500 font-medium"><i className="fas fa-star mr-0.5"></i>{merchant.rating?.toFixed(1) || '0.0'}</span>
+                      <span className="flex items-center"><i className="fas fa-shopping-bag text-blue-400 mr-0.5"></i>{merchant.sales_count || 0}单</span>
+                    </div>
+                    <p className="text-xs text-white/50 line-clamp-1 flex items-center"><i className="fas fa-map-marker-alt mr-1 text-red-400 flex-shrink-0"></i><span className="truncate">{merchant.address}</span></p>
+                  </div>
+                </motion.div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </AnimatePresence>
     </div>

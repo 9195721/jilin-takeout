@@ -33,6 +33,27 @@ export type Database = {
         }
         Relationships: []
       }
+      districts: {
+        Row: {
+          created_at: string | null
+          id: number
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          name?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           created_at: string | null
@@ -226,9 +247,11 @@ export type Database = {
       merchants: {
         Row: {
           address: string
+          category_id: number | null
           cover_image: string | null
           created_at: string | null
           description: string | null
+          district: string | null
           id: number
           images: string[] | null
           is_delivery: boolean | null
@@ -245,9 +268,11 @@ export type Database = {
         }
         Insert: {
           address: string
+          category_id?: number | null
           cover_image?: string | null
           created_at?: string | null
           description?: string | null
+          district?: string | null
           id?: number
           images?: string[] | null
           is_delivery?: boolean | null
@@ -264,9 +289,11 @@ export type Database = {
         }
         Update: {
           address?: string
+          category_id?: number | null
           cover_image?: string | null
           created_at?: string | null
           description?: string | null
+          district?: string | null
           id?: number
           images?: string[] | null
           is_delivery?: boolean | null
