@@ -1,0 +1,308 @@
+/*! !webpack amd options */
+
+/*! ../ignoreAttributes */
+
+/*! ../lib/base64 */
+
+/*! ../lib/crypto */
+
+/*! ../lib/md5 */
+
+/*! ../lib/request */
+
+/*! ../package.json */
+
+/*! ../util */
+
+/*! ../validator */
+
+/*! ./../node_modules/process/browser.js */
+
+/*! ./../node_modules/webpack/buildin/module.js */
+
+/*! ./DocTypeReader */
+
+/*! ./OptionsBuilder */
+
+/*! ./OrderedObjParser */
+
+/*! ./advance */
+
+/*! ./async */
+
+/*! ./base */
+
+/*! ./event */
+
+/*! ./logger */
+
+/*! ./node2json */
+
+/*! ./orderedJs2Xml */
+
+/*! ./session */
+
+/*! ./src/cos */
+
+/*! ./task */
+
+/*! ./toPrimitive.js */
+
+/*! ./toPropertyKey.js */
+
+/*! ./tracker */
+
+/*! ./typeof.js */
+
+/*! ./util */
+
+/*! ./validator */
+
+/*! ./xmlNode */
+
+/*! ./xmlbuilder/json2xml */
+
+/*! ./xmlparser/XMLParser */
+
+/*! @babel/runtime/helpers/classCallCheck */
+
+/*! @babel/runtime/helpers/createClass */
+
+/*! @babel/runtime/helpers/defineProperty */
+
+/*! @babel/runtime/helpers/typeof */
+
+/*! exports provided: name, version, description, main, types, scripts, repository, keywords, author, license, bugs, homepage, dependencies, devDependencies, default */
+
+/*! fast-xml-parser */
+
+/*! no static exports found */
+
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */
+
+/*! strnum */
+
+/*!******************!*\
+  !*** ./index.js ***!
+  \******************/
+
+/*!********************!*\
+  !*** ./lib/md5.js ***!
+  \********************/
+
+/*!********************!*\
+  !*** ./src/cos.js ***!
+  \********************/
+
+/*!*********************!*\
+  !*** ./src/base.js ***!
+  \*********************/
+
+/*!*********************!*\
+  !*** ./src/task.js ***!
+  \*********************/
+
+/*!*********************!*\
+  !*** ./src/util.js ***!
+  \*********************/
+
+/*!**********************!*\
+  !*** ./package.json ***!
+  \**********************/
+
+/*!**********************!*\
+  !*** ./src/async.js ***!
+  \**********************/
+
+/*!**********************!*\
+  !*** ./src/event.js ***!
+  \**********************/
+
+/*!***********************!*\
+  !*** ./lib/base64.js ***!
+  \***********************/
+
+/*!***********************!*\
+  !*** ./lib/crypto.js ***!
+  \***********************/
+
+/*!***********************!*\
+  !*** ./src/logger.js ***!
+  \***********************/
+
+/*!************************!*\
+  !*** ./lib/request.js ***!
+  \************************/
+
+/*!************************!*\
+  !*** ./src/advance.js ***!
+  \************************/
+
+/*!************************!*\
+  !*** ./src/session.js ***!
+  \************************/
+
+/*!************************!*\
+  !*** ./src/tracker.js ***!
+  \************************/
+
+/*!***********************************!*\
+  !*** (webpack)/buildin/module.js ***!
+  \***********************************/
+
+/*!***************************************!*\
+  !*** ./node_modules/strnum/strnum.js ***!
+  \***************************************/
+
+/*!****************************************!*\
+  !*** (webpack)/buildin/amd-options.js ***!
+  \****************************************/
+
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+
+/*!*************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/fxp.js ***!
+  \*************************************************/
+
+/*!**************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/util.js ***!
+  \**************************************************/
+
+/*!*******************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/typeof.js ***!
+  \*******************************************************/
+
+/*!*******************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/validator.js ***!
+  \*******************************************************/
+
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/createClass.js ***!
+  \************************************************************/
+
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/toPrimitive.js ***!
+  \************************************************************/
+
+/*!**************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/toPropertyKey.js ***!
+  \**************************************************************/
+
+/*!**************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/ignoreAttributes.js ***!
+  \**************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/classCallCheck.js ***!
+  \***************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
+  \***************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/xmlparser/xmlNode.js ***!
+  \***************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/xmlbuilder/json2xml.js ***!
+  \*****************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/xmlparser/XMLParser.js ***!
+  \*****************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/xmlparser/node2json.js ***!
+  \*****************************************************************/
+
+/*!*********************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/xmlparser/DocTypeReader.js ***!
+  \*********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/xmlbuilder/orderedJs2Xml.js ***!
+  \**********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/xmlparser/OptionsBuilder.js ***!
+  \**********************************************************************/
+
+/*!************************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/xmlparser/OrderedObjParser.js ***!
+  \************************************************************************/
+
+/**
+ * @license React
+ * react-dom.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * react-jsx-runtime.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @remix-run/router v1.23.2
+ *
+ * Copyright (c) Remix Software Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+
+/**
+ * React Router DOM v6.30.3
+ *
+ * Copyright (c) Remix Software Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+
+/**
+ * React Router v6.30.3
+ *
+ * Copyright (c) Remix Software Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */

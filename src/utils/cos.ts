@@ -1,30 +1,35 @@
-import { supabase } from '../supabase/client';
+import COS from 'cos-js-sdk-v5';
+
+const cos = new COS({
+  SecretId: process.env.COS_SECRET_ID || '',
+  SecretKey: process.env.COS_SECRET_KEY || '',
+});
+
+const Bucket = 'lee2111-1419902782';
+const Region = 'ap-beijing';
 
 export const uploadImage = async (file: File): Promise<string> => {
-  // 读取文件为 base64
-  const base64 = await new Promise<string>((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.readAsDataURL(file);
+  return new Promise((resolve, reject) => {
+    const ext = file.name.split('.').pop() || 'jpg';
+    const key = `images/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+    cos.putObject(
+      {
+        Bucket,
+        Region,
+        Key: key,
+        Body: file,
+        ContentType: file.type,
+      },
+      (err, data) => {
+        if (err) {
+          reject(new Error('图片上传失败: ' + err.message));
+          return;
+        }
+        resolve(`https://${Bucket}.cos.${Region}.myqcloud.com/${key}`);
+      }
+    );
   });
-
-  // 调用 Edge Function 上传
-  const { data, error } = await supabase.functions.invoke('upload-image', {
-    body: {
-      image: base64,
-      filename: file.name,
-    },
-  });
-
-  if (error) {
-    throw new Error(error.message || '上传失败');
-  }
-
-  if (data.error) {
-    throw new Error(data.error);
-  }
-
-  return data.url;
 };
 
 export const uploadImages = async (files: File[]): Promise<string[]> => {
