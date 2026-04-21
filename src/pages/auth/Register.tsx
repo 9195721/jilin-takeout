@@ -53,6 +53,7 @@ const Register: React.FC = () => {
           data: {
             username: formData.username,
             phone: formData.phone,
+            role: formData.role,
           },
         },
       });
@@ -60,18 +61,13 @@ const Register: React.FC = () => {
       if (authError) throw authError;
 
       if (authData.user) {
-        const { error: profileError } = await supabase.from('profiles').insert([
-          {
-            id: authData.user.id,
-            username: formData.username,
-            phone: formData.phone,
-            role: formData.role,
-          },
-        ]);
+        // profile 由数据库 trigger 自动创建，无需手动插入
 
-        if (profileError) throw profileError;
-
+        // 如果是商家注册，等待 trigger 完成后再插入商家申请
         if (formData.role === 'merchant') {
+          // 等待 trigger 创建 profile
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
           const { error: merchantError } = await supabase.from('merchants').insert([
             {
               user_id: authData.user.id,
