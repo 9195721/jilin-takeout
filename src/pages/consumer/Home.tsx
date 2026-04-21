@@ -10,18 +10,114 @@ type Merchant = Database['public']['Tables']['merchants']['Row'] & {
 };
 
 const SkeletonCard = () => (
-  <div className="bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
-    <div className="h-40 bg-gray-200"></div>
+  <div className="bg-slate-800 rounded-2xl overflow-hidden animate-pulse">
+    <div className="h-40 bg-slate-700"></div>
     <div className="p-4 space-y-3">
-      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+      <div className="h-4 bg-slate-700 rounded w-3/4"></div>
       <div className="flex space-x-2">
-        <div className="h-3 bg-gray-200 rounded w-16"></div>
-        <div className="h-3 bg-gray-200 rounded w-16"></div>
+        <div className="h-3 bg-slate-700 rounded w-16"></div>
+        <div className="h-3 bg-slate-700 rounded w-16"></div>
       </div>
-      <div className="h-3 bg-gray-200 rounded w-full"></div>
+      <div className="h-3 bg-slate-700 rounded w-full"></div>
     </div>
   </div>
 );
+
+interface MerchantCardProps {
+  merchant: Merchant;
+  index: number;
+  isLiked: boolean;
+  isFavorited: boolean;
+  onLike: (id: number, e: React.MouseEvent) => void;
+  onFavorite: (id: number, e: React.MouseEvent) => void;
+}
+
+const MerchantCard: React.FC<MerchantCardProps> = ({ merchant, index, isLiked, isFavorited, onLike, onFavorite }) => {
+  const [glowPos, setGlowPos] = useState({ x: 0, y: 0 });
+  const [glowVisible, setGlowVisible] = useState(false);
+  const cardRef = React.useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setGlowPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setGlowVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setGlowVisible(false);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      key={merchant.id}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ delay: index * 0.06 }}
+      whileHover={{ y: -2 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative"
+      style={{ overflow: 'hidden' }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300"
+        style={{
+          opacity: glowVisible ? 1 : 0,
+          background: `radial-gradient(200px circle at ${glowPos.x}px ${glowPos.y}px, rgba(100, 180, 255, 0.35), transparent 70%)`,
+          zIndex: 2,
+        }}
+      />
+      <Link to={`/merchants/${merchant.id}`} className="relative z-[1]">
+        <div className={`bg-slate-800 rounded-2xl overflow-hidden shadow-lg transition-all group ${(merchant.is_open === false) ? 'opacity-60' : ''}`}>
+          <div className="relative h-32 bg-slate-700">
+            {merchant.cover_image ? (
+              <img src={merchant.cover_image} alt={merchant.shop_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-slate-500"><i className="fas fa-store text-4xl"></i></div>
+            )}
+            {merchant.member_level && (
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] text-white flex items-center space-x-1 shadow-lg" style={{ backgroundColor: merchant.member_level.color + 'cc' }}>
+                <span>{merchant.member_level.icon}</span>
+                <span className="font-medium">{merchant.member_level.name}</span>
+              </motion.div>
+            )}
+            <div className="absolute top-2 right-2 flex space-x-1">
+              <button onClick={(e) => onLike(merchant.id, e)} className={`w-6 h-6 rounded-full flex items-center justify-center transition-all border border-slate-500 ${isLiked ? 'bg-red-500/80 text-white' : 'bg-slate-600 text-white hover:bg-slate-500'}`}>
+                <i className={`${isLiked ? 'fas' : 'far'} fa-heart text-[10px]`}></i>
+              </button>
+              <button onClick={(e) => onFavorite(merchant.id, e)} className={`w-6 h-6 rounded-full flex items-center justify-center transition-all border border-slate-500 ${isFavorited ? 'bg-yellow-500/80 text-white' : 'bg-slate-600 text-white hover:bg-slate-500'}`}>
+                <i className={`${isFavorited ? 'fas' : 'far'} fa-star text-[10px]`}></i>
+              </button>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-8 bg-black/80 flex items-center justify-between px-2.5">
+              <span className={`flex items-center space-x-1 text-[11px] text-white ${merchant.is_open === false ? 'opacity-70' : ''}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${merchant.is_open === false ? 'bg-gray-400' : 'bg-green-400 animate-pulse'}`}></span>
+                <span className={merchant.is_open === false ? '' : 'neon-glow'}>{merchant.is_open === false ? '休息中' : '营业中'}</span>
+              </span>
+              {merchant.is_delivery && (
+                <span className="flex items-center space-x-1 text-[11px] text-blue-300">
+                  <i className="fas fa-truck text-[10px]"></i>
+                  <span>送货上门</span>
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="p-5 bg-slate-700">
+            <h3 className="font-bold text-white mb-1 text-sm group-hover:text-white/80 transition-colors truncate">{merchant.shop_name}</h3>
+            <div className="flex items-center justify-between text-xs text-white/70 mb-1">
+              <span className="flex items-center text-yellow-400 font-medium"><i className="fas fa-star mr-0.5"></i>{merchant.rating?.toFixed(1) || '0.0'}</span>
+              <span className="flex items-center"><i className="fas fa-shopping-bag text-blue-400 mr-0.5"></i>{merchant.sales_count || 0}单</span>
+            </div>
+            <p className="text-[11px] text-white/50 line-clamp-1 flex items-center"><i className="fas fa-map-marker-alt mr-1 text-red-400"></i>{merchant.address}</p>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
 
 const ConsumerHome: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -123,9 +219,9 @@ const ConsumerHome: React.FC = () => {
         <div className="h-32 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl mb-6 animate-pulse"></div>
         <div className="grid grid-cols-4 gap-4 mb-8">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
-              <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-16 mx-auto"></div>
+            <div key={i} className="bg-slate-800 rounded-2xl p-4 animate-pulse">
+              <div className="w-12 h-12 bg-slate-700 rounded-full mx-auto mb-2"></div>
+              <div className="h-3 bg-slate-700 rounded w-16 mx-auto"></div>
             </div>
           ))}
         </div>
@@ -137,7 +233,7 @@ const ConsumerHome: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="max-w-7xl mx-auto px-4 py-6 text-[1.2em]">
       {/* 搜索框 - Liquid Glass */}
       <motion.form initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSearch} className="mb-6">
         <div className="relative">
@@ -154,8 +250,8 @@ const ConsumerHome: React.FC = () => {
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-10 -mb-10"></div>
         <div className="relative z-10 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-2">欢迎来到吉林外卖</h1>
-            <p className="text-white/70 text-sm">发现本地优质商家，享受便捷生活服务</p>
+            <h1 className="text-4xl font-black tracking-tight mb-2">欢迎来到吉林外卖</h1>
+            <p className="text-white/70 text-base">发现本地优质商家，享受便捷生活服务</p>
           </div>
           <Link to="/notifications" className="relative p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors border border-white/30">
             <i className="fas fa-bell text-xl"></i>
@@ -189,7 +285,7 @@ const ConsumerHome: React.FC = () => {
         <div className="grid grid-cols-4 gap-4">
           {categories.map((category, index) => (
             <motion.div key={category.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link to={`/merchants?category=${category.id}`} className="flex flex-col items-center bg-white/15 backdrop-blur-[40px] backdrop-saturate-[180%] rounded-2xl p-4 border border-white/30 hover:border-white/50 transition-all duration-300 group">
+              <Link to={`/merchants?category=${category.id}`} className="flex flex-col items-center bg-slate-700 rounded-2xl p-4 hover:bg-slate-600 transition-all duration-300 group">
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400/80 to-purple-500/80 flex items-center justify-center mb-3 shadow-lg border border-white/30">
                   <span className="text-2xl text-white">{category.icon}</span>
                 </div>
@@ -207,56 +303,26 @@ const ConsumerHome: React.FC = () => {
           <Link to="/merchants" className="text-sm text-white/70 hover:text-white flex items-center">查看全部 <i className="fas fa-chevron-right text-xs ml-1"></i></Link>
         </div>
         <AnimatePresence>
-          <div className="space-y-4">
-            {featuredMerchants.length === 0 ? (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12 text-white/50 bg-white/10 backdrop-blur-[40px] backdrop-saturate-[180%] rounded-2xl border border-white/20">
-                <i className="fas fa-store-slash text-5xl mb-3"></i>
-                <p>暂无推荐商家</p>
-              </motion.div>
-            ) : (
-              featuredMerchants.map((merchant, index) => (
-                <motion.div key={merchant.id} initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }} transition={{ delay: index * 0.08 }} whileHover={{ y: -2 }}>
-                  <Link to={`/merchants/${merchant.id}`}>
-                    <div className="bg-white/15 backdrop-blur-[40px] backdrop-saturate-[180%] rounded-2xl overflow-hidden border border-white/30 hover:border-white/50 transition-all group">
-                      <div className="relative h-40 bg-white/10">
-                        {merchant.cover_image ? (
-                          <img src={merchant.cover_image} alt={merchant.shop_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-white/30"><i className="fas fa-store text-5xl"></i></div>
-                        )}
-                        {merchant.member_level && (
-                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs text-white flex items-center space-x-1 shadow-lg backdrop-blur-sm border border-white/30" style={{ backgroundColor: merchant.member_level.color + 'cc' }}>
-                            <span>{merchant.member_level.icon}</span>
-                            <span className="font-medium">{merchant.member_level.name}</span>
-                          </motion.div>
-                        )}
-                        <div className="absolute top-3 right-3 flex space-x-2">
-                          <button onClick={(e) => toggleLike(merchant.id, e)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-all border border-white/30 ${likedMerchants.has(merchant.id) ? 'bg-red-500/80 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}>
-                            <i className={`${likedMerchants.has(merchant.id) ? 'fas' : 'far'} fa-heart text-sm`}></i>
-                          </button>
-                          <button onClick={(e) => toggleFavorite(merchant.id, e)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-all border border-white/30 ${favoritedMerchants.has(merchant.id) ? 'bg-yellow-500/80 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}>
-                            <i className={`${favoritedMerchants.has(merchant.id) ? 'fas' : 'far'} fa-star text-sm`}></i>
-                          </button>
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/60 to-transparent"></div>
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-bold text-white mb-2 text-lg group-hover:text-white/80 transition-colors">{merchant.shop_name}</h3>
-                        <div className="flex items-center justify-between text-sm text-white/70 mb-2">
-                          <div className="flex items-center space-x-3">
-                            <span className="flex items-center text-yellow-400 font-medium"><i className="fas fa-star mr-1"></i>{merchant.rating?.toFixed(1) || '0.0'}</span>
-                            <span className="flex items-center"><i className="fas fa-shopping-bag text-blue-400 mr-1"></i>{merchant.sales_count || 0}单</span>
-                          </div>
-                          <span className="flex items-center text-white/50"><i className="fas fa-eye mr-1"></i>{merchant.views || 0}</span>
-                        </div>
-                        <p className="text-sm text-white/60 line-clamp-1 flex items-center"><i className="fas fa-map-marker-alt mr-1.5 text-red-400"></i>{merchant.address}</p>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))
-            )}
-          </div>
+          {featuredMerchants.length === 0 ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12 text-white/50 bg-white/10 backdrop-blur-[40px] backdrop-saturate-[180%] rounded-2xl border border-white/20 col-span-2">
+              <i className="fas fa-store-slash text-5xl mb-3"></i>
+              <p>暂无推荐商家</p>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {featuredMerchants.map((merchant, index) => (
+                <MerchantCard
+                  key={merchant.id}
+                  merchant={merchant}
+                  index={index}
+                  isLiked={likedMerchants.has(merchant.id)}
+                  isFavorited={favoritedMerchants.has(merchant.id)}
+                  onLike={toggleLike}
+                  onFavorite={toggleFavorite}
+                />
+              ))}
+            </div>
+          )}
         </AnimatePresence>
       </section>
     </div>

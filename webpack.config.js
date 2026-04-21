@@ -21,49 +21,28 @@ module.exports = (env, argv) => {
             loader: 'babel-loader',
             options: {
               presets: [
-                [
-                  '@babel/preset-react',
-                  {
-                    runtime: 'automatic',
-                    development: isDev
-                  }
-                ],
+                ['@babel/preset-react', { runtime: 'automatic', development: isDev }],
                 '@babel/preset-env',
                 '@babel/preset-typescript'
               ]
             }
           }
         },
-        {
-          test: /\.css$/,
-          use: ['style-loader', 'css-loader', 'postcss-loader']
-        }
+        { test: /\.css$/, use: ['style-loader', 'css-loader', 'postcss-loader'] }
       ]
     },
-    resolve: {
-      extensions: ['.ts', '.tsx', '.js', '.jsx']
-    },
+    resolve: { extensions: ['.ts', '.tsx', '.js', '.jsx'] },
     devServer: {
       port: 3266,
       allowedHosts: 'all',
-      historyApiFallback: {
-        index: '/index.html',
-        rewrites: [
-          { from: /^\/_p\/\d+\//, to: '/index.html' }
-        ]
-      }
+      historyApiFallback: { index: '/index.html', rewrites: [{ from: /^\/_p\/\d+\//, to: '/index.html' }] }
     },
     plugins: [
       new webpack.DefinePlugin({
         'process.env.COS_SECRET_ID': JSON.stringify(process.env.COS_SECRET_ID || ''),
         'process.env.COS_SECRET_KEY': JSON.stringify(process.env.COS_SECRET_KEY || ''),
-        'process.env.COS_BUCKET': JSON.stringify(process.env.COS_BUCKET || 'lee2111-1419902782'),
-        'process.env.COS_REGION': JSON.stringify(process.env.COS_REGION || 'ap-beijing'),
       }),
-      new HtmlWebpackPlugin({
-        template: './index.html',
-        inject: 'body'
-      })
+      new HtmlWebpackPlugin({ template: './index.html', inject: 'body' })
     ]
   };
 };

@@ -35,9 +35,9 @@ const ConsumerLayout: React.FC = () => {
 
   const navItems = [
     { path: '/', label: '首页', icon: 'fa-home' },
-    { path: '/categories', label: '分类', icon: 'fa-th-large' },
+    { path: '/brand', label: '品牌商家', icon: 'fa-crown' },
     { path: '/merchants', label: '商家', icon: 'fa-store' },
-    { path: '/search', label: '搜索', icon: 'fa-search' },
+    { path: '/profile', label: '我的', icon: 'fa-user' },
   ];
 
   if (loading) {

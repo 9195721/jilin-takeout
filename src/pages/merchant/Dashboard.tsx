@@ -8,6 +8,52 @@ type Merchant = Database['public']['Tables']['merchants']['Row'] & {
   member_level: Database['public']['Tables']['member_levels']['Row'] | null;
 };
 
+const BusinessToggle = ({ label, activeLabel, inactiveLabel, active, disabled, activeColor, icon, onToggle }: {
+  label: string;
+  activeLabel: string;
+  inactiveLabel: string;
+  active: boolean;
+  disabled: boolean;
+  activeColor: string;
+  icon: string;
+  onToggle: () => void;
+}) => {
+  const gradientMap: Record<string, string> = {
+    green: 'from-green-400 to-green-500',
+    blue: 'from-blue-400 to-blue-500',
+  };
+  const gradient = gradientMap[activeColor] || gradientMap.green;
+
+  return (
+    <div className="flex items-center justify-between bg-white/10 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/20">
+      <div className="flex items-center space-x-2">
+        <i className={`fas ${icon} text-white/80 text-sm`}></i>
+        <span className="text-white text-sm font-medium">{label}</span>
+      </div>
+      <div
+        onClick={disabled ? undefined : onToggle}
+        className={`relative w-[140px] h-10 rounded-full cursor-pointer overflow-hidden transition-opacity duration-200 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+      >
+        {/* Background tracks */}
+        <div className={`absolute inset-0 flex transition-all duration-300`}>
+          <div className={`flex-1 flex items-center justify-center text-[11px] font-medium transition-colors duration-300 ${active ? `bg-gradient-to-r ${gradient} text-white` : 'bg-white/20 text-white/40'}`}>
+            {activeLabel}
+          </div>
+          <div className={`w-px bg-white/30`}></div>
+          <div className={`flex-1 flex items-center justify-center text-[11px] font-medium transition-colors duration-300 ${!active ? `bg-gradient-to-r ${gradient} text-white` : 'bg-white/20 text-white/40'}`}>
+            {inactiveLabel}
+          </div>
+        </div>
+        {/* Slider knob */}
+        <div
+          className={`absolute top-1 w-8 h-8 rounded-full bg-white shadow-lg transition-all duration-300 ease-in-out ${active ? 'left-1' : 'left-[calc(100%-36px)]'}`}
+          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        ></div>
+      </div>
+    </div>
+  );
+};
+
 const StatCard = ({ title, value, icon, color, delay }: { title: string; value: string | number; icon: string; color: string; delay: number }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -27,6 +73,7 @@ const StatCard = ({ title, value, icon, color, delay }: { title: string; value: 
 const MerchantDashboard: React.FC = () => {
   const [merchant, setMerchant] = useState<Merchant | null>(null);
   const [loading, setLoading] = useState(true);
+  const [toggling, setToggling] = useState<string | null>(null);
 
   useEffect(() => {
     fetchMerchantInfo();
@@ -57,6 +104,33 @@ const MerchantDashboard: React.FC = () => {
       console.error('Failed to fetch merchant info:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggle = async (field: 'is_open' | 'is_delivery') => {
+    if (!merchant || toggling) return;
+    const currentValue = merchant[field] ?? true;
+    const newValue = !currentValue;
+
+    // Optimistic update
+    setMerchant({ ...merchant, [field]: newValue });
+    setToggling(field);
+
+    try {
+      const { error } = await supabase
+        .from('merchants')
+        .update({ [field]: newValue })
+        .eq('id', merchant.id);
+
+      if (error) {
+        console.error(`Failed to toggle ${field}:`, error);
+        setMerchant({ ...merchant, [field]: currentValue });
+      }
+    } catch (error) {
+      console.error(`Failed to toggle ${field}:`, error);
+      setMerchant({ ...merchant, [field]: currentValue });
+    } finally {
+      setToggling(null);
     }
   };
 
@@ -155,12 +229,36 @@ const MerchantDashboard: React.FC = () => {
             </motion.div>
           )}
         </div>
+
+        {/* 营业状态开关 */}
+        <div className="relative z-10 mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <BusinessToggle
+            label="营业状态"
+            activeLabel="营业中"
+            inactiveLabel="休业"
+            active={merchant.is_open ?? true}
+            disabled={merchant.status !== 'approved' || toggling === 'is_open'}
+            activeColor="green"
+            icon="fa-store"
+            onToggle={() => handleToggle('is_open')}
+          />
+          <BusinessToggle
+            label="配送方式"
+            activeLabel="送货上门"
+            inactiveLabel="到店自取"
+            active={merchant.is_delivery ?? true}
+            disabled={toggling === 'is_delivery'}
+            activeColor="blue"
+            icon="fa-truck"
+            onToggle={() => handleToggle('is_delivery')}
+          />
+        </div>
       </motion.div>
 
       {/* 数据统计卡片 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard 
-          title="总浏览量" 
+        <StatCard
+          title="总浏览量"
           value={merchant.views || 0} 
           icon="fa-eye" 
           color="bg-blue-500" 

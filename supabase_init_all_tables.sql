@@ -44,6 +44,8 @@ CREATE TABLE public.merchants (
   views INTEGER DEFAULT 0,
   rating DECIMAL(3, 2) DEFAULT 0.00,
   sales_count INTEGER DEFAULT 0,
+  is_open BOOLEAN DEFAULT true,
+  is_delivery BOOLEAN DEFAULT true,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );

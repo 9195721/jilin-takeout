@@ -231,6 +231,8 @@ export type Database = {
           description: string | null
           id: number
           images: string[] | null
+          is_delivery: boolean | null
+          is_open: boolean | null
           member_level_id: number | null
           phone: string
           rating: number | null
@@ -248,6 +250,8 @@ export type Database = {
           description?: string | null
           id?: number
           images?: string[] | null
+          is_delivery?: boolean | null
+          is_open?: boolean | null
           member_level_id?: number | null
           phone: string
           rating?: number | null
@@ -265,6 +269,8 @@ export type Database = {
           description?: string | null
           id?: number
           images?: string[] | null
+          is_delivery?: boolean | null
+          is_open?: boolean | null
           member_level_id?: number | null
           phone?: string
           rating?: number | null

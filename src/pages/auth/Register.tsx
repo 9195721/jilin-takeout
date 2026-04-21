@@ -6,7 +6,6 @@ import { supabase } from '../../supabase/client';
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
     phone: '',
     password: '',
     confirmPassword: '',
@@ -20,8 +19,6 @@ const Register: React.FC = () => {
   const validatePhone = (phone: string) => /^1[3-9]\d{9}$/.test(phone);
 
   const validateForm = () => {
-    if (!formData.username) return '请输入用户名';
-    if (formData.username.length < 2) return '用户名至少2个字符';
     if (!formData.phone) return '请输入手机号码';
     if (!validatePhone(formData.phone)) return '请输入有效的11位手机号码';
     if (!formData.password) return '请输入密码';
@@ -51,7 +48,7 @@ const Register: React.FC = () => {
         password: formData.password,
         options: {
           data: {
-            username: formData.username,
+            username: formData.phone,
             phone: formData.phone,
             role: formData.role,
           },
@@ -71,7 +68,7 @@ const Register: React.FC = () => {
           const { error: merchantError } = await supabase.from('merchants').insert([
             {
               user_id: authData.user.id,
-              shop_name: formData.username + '的店铺',
+              shop_name: formData.phone + '的店铺',
               address: '请填写详细地址',
               phone: formData.phone,
               status: 'pending',
@@ -125,25 +122,6 @@ const Register: React.FC = () => {
         </AnimatePresence>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">用户名</label>
-            <div className="relative group">
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-green-500 transition-colors">
-                <i className="fas fa-user"></i>
-              </div>
-              <input
-                type="text"
-                value={formData.username}
-                onChange={(e) => {
-                  setFormData({ ...formData, username: e.target.value });
-                  setError(null);
-                }}
-                className="w-full pl-12 pr-4 py-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-50 transition-all bg-white text-gray-900 placeholder-gray-400"
-                placeholder="请输入用户名"
-              />
-            </div>
-          </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">手机号码</label>
             <div className="relative group">

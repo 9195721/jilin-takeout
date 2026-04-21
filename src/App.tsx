@@ -16,6 +16,7 @@ import ConsumerFavorites from './pages/consumer/Favorites';
 import ConsumerCoupons from './pages/consumer/Coupons';
 import ConsumerNotifications from './pages/consumer/Notifications';
 import ConsumerReviews from './pages/consumer/Reviews';
+import BrandMerchants from './pages/consumer/BrandMerchants';
 import MerchantDashboard from './pages/merchant/Dashboard';
 import MerchantShopInfo from './pages/merchant/ShopInfo';
 import MerchantMenuManage from './pages/merchant/MenuManage';
@@ -117,7 +118,7 @@ const AppContent: React.FC = () => {
       {/* C端消费者路由：根路径直接展示消费者首页 */}
       <Route path="/" element={<ConsumerLayout />}>
         <Route index element={<ConsumerHome />} />
-        <Route path="categories" element={<ConsumerCategories />} />
+        <Route path="brand" element={<BrandMerchants />} />
         <Route path="merchants" element={<ConsumerMerchants />} />
         <Route path="merchants/:id" element={<ConsumerMerchantDetail />} />
         <Route path="search" element={<ConsumerSearch />} />
@@ -171,7 +172,9 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <HashRouter>
-        <AppContent />
+        <div className="relative z-[1]">
+          <AppContent />
+        </div>
       </HashRouter>
     </ErrorBoundary>
   );
