@@ -256,6 +256,12 @@ export type Database = {
           images: string[] | null
           is_delivery: boolean | null
           is_open: boolean | null
+          is_visible: boolean | null
+          is_featured: boolean | null
+          is_top: boolean | null
+          sort_weight: number | null
+          tags: string[] | null
+          open_hours: string | null
           member_level_id: number | null
           phone: string
           rating: number | null
@@ -277,6 +283,12 @@ export type Database = {
           images?: string[] | null
           is_delivery?: boolean | null
           is_open?: boolean | null
+          is_visible?: boolean | null
+          is_featured?: boolean | null
+          is_top?: boolean | null
+          sort_weight?: number | null
+          tags?: string[] | null
+          open_hours?: string | null
           member_level_id?: number | null
           phone: string
           rating?: number | null
@@ -298,6 +310,12 @@ export type Database = {
           images?: string[] | null
           is_delivery?: boolean | null
           is_open?: boolean | null
+          is_visible?: boolean | null
+          is_featured?: boolean | null
+          is_top?: boolean | null
+          sort_weight?: number | null
+          tags?: string[] | null
+          open_hours?: string | null
           member_level_id?: number | null
           phone?: string
           rating?: number | null
@@ -448,6 +466,9 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"] | null
           updated_at: string | null
           username: string | null
+          status: string | null
+          member_level_id: number | null
+          banned_reason: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -457,6 +478,9 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           username?: string | null
+          status?: string | null
+          member_level_id?: number | null
+          banned_reason?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -466,6 +490,9 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           username?: string | null
+          status?: string | null
+          member_level_id?: number | null
+          banned_reason?: string | null
         }
         Relationships: []
       }
@@ -539,6 +566,115 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      admin_logs: {
+        Row: {
+          id: number
+          admin_id: string
+          admin_name: string | null
+          action: string
+          target: string | null
+          detail: string | null
+          ip: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: number
+          admin_id: string
+          admin_name?: string | null
+          action: string
+          target?: string | null
+          detail?: string | null
+          ip?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: number
+          admin_id?: string
+          admin_name?: string | null
+          action?: string
+          target?: string | null
+          detail?: string | null
+          ip?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_logs_admin_id_fkey"
+            columns: ["admin_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      banners: {
+        Row: {
+          id: number
+          title: string
+          image_url: string
+          link_type: string | null
+          link_value: string | null
+          sort_order: number | null
+          is_visible: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: number
+          title: string
+          image_url: string
+          link_type?: string | null
+          link_value?: string | null
+          sort_order?: number | null
+          is_visible?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: number
+          title?: string
+          image_url?: string
+          link_type?: string | null
+          link_value?: string | null
+          sort_order?: number | null
+          is_visible?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      announcements: {
+        Row: {
+          id: number
+          title: string
+          content: string
+          type: string | null
+          is_pinned: boolean | null
+          is_visible: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: number
+          title: string
+          content: string
+          type?: string | null
+          is_pinned?: boolean | null
+          is_visible?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: number
+          title?: string
+          content?: string
+          type?: string | null
+          is_pinned?: boolean | null
+          is_visible?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

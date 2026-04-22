@@ -25,6 +25,11 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminMerchantAudit from './pages/admin/MerchantAudit';
 import AdminCategoryManage from './pages/admin/CategoryManage';
 import AdminMemberLevels from './pages/admin/MemberLevels';
+import AdminMerchants from './pages/admin/Merchants';
+import AdminUsers from './pages/admin/Users';
+import AdminBanners from './pages/admin/Banners';
+import AdminAnnouncements from './pages/admin/Announcements';
+import AdminOperations from './pages/admin/Operations';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
@@ -157,9 +162,14 @@ const AppContent: React.FC = () => {
       >
         <Route index element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="merchants" element={<AdminMerchants />} />
         <Route path="merchant-audit" element={<AdminMerchantAudit />} />
+        <Route path="users" element={<AdminUsers />} />
         <Route path="category-manage" element={<AdminCategoryManage />} />
         <Route path="member-levels" element={<AdminMemberLevels />} />
+        <Route path="banners" element={<AdminBanners />} />
+        <Route path="announcements" element={<AdminAnnouncements />} />
+        <Route path="operations" element={<AdminOperations />} />
       </Route>
 
       {/* 404路由 */}
