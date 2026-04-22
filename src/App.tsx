@@ -37,11 +37,16 @@ import Register from './pages/auth/Register';
 import ConsumerLayout from './layouts/ConsumerLayout';
 import MerchantLayout from './layouts/MerchantLayout';
 import AdminLayout from './layouts/AdminLayout';
+import { AdminProvider } from './contexts/AdminContext';
+
+// 操作日志 & 系统设置页面
+import AdminOperationLog from './pages/admin/OperationLog';
+import AdminSystemSettings from './pages/admin/SystemSettings';
 
 // 受保护路由组件
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'user' | 'merchant' | 'admin';
+  requiredRole?: 'user' | 'merchant' | 'admin' | 'super_admin';
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
@@ -100,10 +105,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
   }
 
   if (requiredRole && userRole !== requiredRole) {
-    // 如果角色不匹配，直接拦截并提示或重定向
-    // 这里我们选择重定向到该角色对应的首页，防止用户误入
+    // admin 和 super_admin 互通
+    const adminRoles = ['admin', 'super_admin'];
+    if (adminRoles.includes(requiredRole) && adminRoles.includes(userRole || '')) {
+      return <>{children}</>;
+    }
     if (userRole === 'merchant') return <Navigate to="/merchant/dashboard" replace />;
-    if (userRole === 'admin') return <Navigate to="/admin/dashboard" replace />;
+    if (adminRoles.includes(userRole || '')) return <Navigate to="/admin/dashboard" replace />;
     return <Navigate to="/" replace />;
   }
 
@@ -156,7 +164,9 @@ const AppContent: React.FC = () => {
         path="/admin"
         element={
           <ProtectedRoute requiredRole="admin">
-            <AdminLayout />
+            <AdminProvider>
+              <AdminLayout />
+            </AdminProvider>
           </ProtectedRoute>
         }
       >
@@ -170,6 +180,8 @@ const AppContent: React.FC = () => {
         <Route path="banners" element={<AdminBanners />} />
         <Route path="announcements" element={<AdminAnnouncements />} />
         <Route path="operations" element={<AdminOperations />} />
+        <Route path="operation-log" element={<AdminOperationLog />} />
+        <Route path="settings" element={<AdminSystemSettings />} />
       </Route>
 
       {/* 404路由 */}

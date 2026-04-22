@@ -10,7 +10,8 @@
 | 文件 | 时间 | 说明 |
 |---|---|---|
 | `jilin-takeout-backup-20260421.zip` | 4/21 18:50 | 优化版（含 framer-motion、骨架屏）|
-| `jilin-takeout-backup-20260422-0700.zip` | 4/22 07:19 | 4.22 早版存档（从 4/21 备份恢复后构建版）|
+| `jilin-takeout-full-backup-20260422.zip` | 4/22 11:00 | 完整项目备份（39.75MB，含 node_modules）|
+| `db-migrations-backup-20260422\` | 4/22 11:00 | 数据库 SQL 迁移脚本副本（12个文件）|
 
 ## Supabase Management API（远程 SQL 执行）
 - API: `POST https://api.supabase.com/v1/projects/{ref}/database/query`

@@ -12,7 +12,7 @@ const AdminLayout: React.FC = () => {
       label: '运营概览',
       items: [
         { path: '/admin/dashboard', label: '数据概览', icon: 'fa-chart-line' },
-        { path: '/admin/logs', label: '操作日志', icon: 'fa-history' },
+        { path: '/admin/operation-log', label: '操作日志', icon: 'fa-history' },
       ],
     },
     {
@@ -35,6 +35,12 @@ const AdminLayout: React.FC = () => {
         { path: '/admin/category-manage', label: '分类管理', icon: 'fa-tags' },
         { path: '/admin/banners', label: '轮播图', icon: 'fa-images' },
         { path: '/admin/announcements', label: '公告管理', icon: 'fa-bullhorn' },
+      ],
+    },
+    {
+      label: '系统',
+      items: [
+        { path: '/admin/settings', label: '系统设置', icon: 'fa-cog' },
       ],
     },
   ];

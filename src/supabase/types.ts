@@ -460,39 +460,42 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          banned_reason: string | null
+          banned_until: string | null
           created_at: string | null
           id: string
+          member_level_id: number | null
           phone: string | null
           role: Database["public"]["Enums"]["app_role"] | null
+          status: string | null
           updated_at: string | null
           username: string | null
-          status: string | null
-          member_level_id: number | null
-          banned_reason: string | null
         }
         Insert: {
           avatar_url?: string | null
+          banned_reason?: string | null
+          banned_until?: string | null
           created_at?: string | null
           id: string
+          member_level_id?: number | null
           phone?: string | null
           role?: Database["public"]["Enums"]["app_role"] | null
+          status?: string | null
           updated_at?: string | null
           username?: string | null
-          status?: string | null
-          member_level_id?: number | null
-          banned_reason?: string | null
         }
         Update: {
           avatar_url?: string | null
+          banned_reason?: string | null
+          banned_until?: string | null
           created_at?: string | null
           id?: string
+          member_level_id?: number | null
           phone?: string | null
           role?: Database["public"]["Enums"]["app_role"] | null
+          status?: string | null
           updated_at?: string | null
           username?: string | null
-          status?: string | null
-          member_level_id?: number | null
-          banned_reason?: string | null
         }
         Relationships: []
       }
@@ -569,34 +572,34 @@ export type Database = {
       }
       admin_logs: {
         Row: {
-          id: number
-          admin_id: string
-          admin_name: string | null
           action: string
-          target: string | null
-          detail: string | null
-          ip: string | null
+          admin_id: string | null
           created_at: string | null
+          detail: Json
+          id: number
+          ip_address: string | null
+          target_id: string | null
+          target_type: string | null
         }
         Insert: {
-          id?: number
-          admin_id: string
-          admin_name?: string | null
           action: string
-          target?: string | null
-          detail?: string | null
-          ip?: string | null
+          admin_id?: string | null
           created_at?: string | null
+          detail?: Json
+          id?: number
+          ip_address?: string | null
+          target_id?: string | null
+          target_type?: string | null
         }
         Update: {
-          id?: number
-          admin_id?: string
-          admin_name?: string | null
           action?: string
-          target?: string | null
-          detail?: string | null
-          ip?: string | null
+          admin_id?: string | null
           created_at?: string | null
+          detail?: Json
+          id?: number
+          ip_address?: string | null
+          target_id?: string | null
+          target_type?: string | null
         }
         Relationships: [
           {
@@ -609,69 +612,66 @@ export type Database = {
       }
       banners: {
         Row: {
-          id: number
-          title: string
-          image_url: string
-          link_type: string | null
-          link_value: string | null
-          sort_order: number | null
-          is_visible: boolean | null
           created_at: string | null
+          id: number
+          image_url: string
+          is_active: boolean | null
+          link_url: string | null
+          sort_order: number | null
+          title: string
           updated_at: string | null
         }
         Insert: {
-          id?: number
-          title: string
-          image_url: string
-          link_type?: string | null
-          link_value?: string | null
-          sort_order?: number | null
-          is_visible?: boolean | null
           created_at?: string | null
+          id?: number
+          image_url: string
+          is_active?: boolean | null
+          link_url?: string | null
+          sort_order?: number | null
+          title: string
           updated_at?: string | null
         }
         Update: {
-          id?: number
-          title?: string
-          image_url?: string
-          link_type?: string | null
-          link_value?: string | null
-          sort_order?: number | null
-          is_visible?: boolean | null
           created_at?: string | null
+          id?: number
+          image_url?: string
+          is_active?: boolean | null
+          link_url?: string | null
+          sort_order?: number | null
+          title?: string
           updated_at?: string | null
         }
         Relationships: []
       }
       announcements: {
         Row: {
-          id: number
-          title: string
           content: string
-          type: string | null
-          is_pinned: boolean | null
-          is_visible: boolean | null
           created_at: string | null
+          expires_at: string | null
+          id: number
+          is_active: boolean | null
+          title: string
+          type: string | null
           updated_at: string | null
         }
         Insert: {
-          id?: number
-          title: string
           content: string
-          type?: string | null
-          is_pinned?: boolean | null
-          is_visible?: boolean | null
           created_at?: string | null
+          expires_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          title: string
+          type?: string | null
           updated_at?: string | null
         }
         Update: {
-          id?: number
-          title?: string
           content?: string
-          type?: string | null
-          is_pinned?: boolean | null
-          is_visible?: boolean | null
           created_at?: string | null
+          expires_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          title?: string
+          type?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -794,7 +794,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "user" | "merchant" | "admin"
+      app_role: "user" | "merchant" | "admin" | "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -910,7 +910,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["user", "merchant", "admin"],
+      app_role: ["user", "merchant", "admin", "super_admin"],
     },
   },
 } as const
