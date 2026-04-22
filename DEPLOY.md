@@ -1,41 +1,55 @@
 # 快速部署指南
 
-## 一键部署
+## 自动部署（CODING CI）
+
+> 推送代码到 CODING 仓库后，自动触发 CI 流水线：
+> `npm install` → `npm run build` → `vercel deploy --prod`
+>
+> 无需手动操作，等待 5-7 分钟后 [moojilin55.site](https://moojilin55.site) 自动更新。
 
 ```bash
-chmod +x outputs/quick-deploy.sh
-./outputs/quick-deploy.sh
+# 推送到 CODING（触发自动构建+部署）
+git push origin main
 ```
 
-## 手动步骤
+## 手动本地构建
 
-### 1. 构建项目
 ```bash
+# 安装依赖
+pnpm install   # 或 npm install
+
+# 构建生产版本
 pnpm run build
 ```
 
-### 2. 推送到 GitHub
-```bash
-git init
-git add .
-git commit -m "Deploy"
-git remote add origin https://github.com/9195721/jilin-takeout.git
-git push -u origin main
-```
+## 回滚操作
 
-### 3. Vercel 部署
-1. 访问 https://vercel.com
-2. GitHub 登录 → Add New Project
-3. 导入 `jilin-takeout`
-4. Framework Preset: **Other**
-5. 点击 Deploy
+Vercel 每次部署都会生成独立 URL，随时可在 [Vercel Dashboard](https://vercel.com) 回滚到任意历史版本。
 
 ## 配置信息
 
-- **Supabase**: 已内置在代码中
-- **主题**: Liquid Glass (液态玻璃)
-- **GitHub**: 9195721/jilin-takeout
+| 项目 | 值 |
+|------|-----|
+| 代码托管 | CODING（主仓库） |
+| 只读镜像 | GitHub（9195721/jilin-takeout） |
+| 部署目标 | Vercel（moojilin55.site） |
+| 构建触发 | CODING CI 流水线 |
+| CI 环境变量 | `VERCEL_TOKEN`（存储在 CODING 项目设置中） |
+
+## CODING CI 环境变量设置
+
+在 CODING 项目中配置以下环境变量（不提交到仓库）：
+
+1. 进入项目 → 持续集成 → 构建环境 → 环境变量
+2. 添加 `VERCEL_TOKEN`，值为 Vercel Token
+
+## 本地开发
+
+```bash
+pnpm install
+pnpm run dev
+```
 
 ## 部署后
 
-获得域名：`https://jilin-takeout-xxx.vercel.app`
+访问：[https://moojilin55.site](https://moojilin55.site)

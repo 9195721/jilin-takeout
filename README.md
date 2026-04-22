@@ -1,5 +1,9 @@
 # 吉林外卖 - Jilin Takeout
 
+> **代码托管**: [CODING](https://coding.net) | **镜像**: [GitHub](https://github.com/9195721/jilin-takeout)（只读）
+>
+> **自动化部署**: CODING CI → Vercel（push 即部署）
+
 一个基于 React + TypeScript + Tailwind CSS + Supabase 的外卖平台应用。
 
 ## 技术栈
@@ -37,36 +41,24 @@ pnpm run build
 
 ### 部署到 Vercel
 
-#### 方式一：使用脚本（推荐）
+> 部署通过 CODING 持续集成自动化完成，每次 push 到 CODING 仓库后自动触发构建与部署。
+
+#### 手动触发构建（本地开发时）
 
 ```bash
-chmod +x outputs/deploy-to-vercel.sh
-./outputs/deploy-to-vercel.sh
+# 推送到 CODING，CI 自动部署
+git push origin main
 ```
 
-#### 方式二：手动部署
+#### Vercel 部署历史
 
-1. **推送到 GitHub**
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/9195721/jilin-takeout.git
-git push -u origin main
-```
-
-2. **Vercel 部署**
-   - 访问 https://vercel.com
-   - 使用 GitHub 登录
-   - 点击 "Add New Project"
-   - 导入 `jilin-takeout` 仓库
-   - Framework Preset 选择 "Other"
-   - 添加环境变量（见下方）
-   - 点击 "Deploy"
+访问 [Vercel Dashboard](https://vercel.com/dashboard) 查看部署记录和回滚。
 
 ### 环境变量配置
 
-✅ **已配置**：Supabase 连接信息已写入代码，无需手动设置环境变量
+> 所有敏感配置（Supabase、COS 等）已在代码中硬编码，不需要手动设置。
+>
+> Vercel Token 存储在 CODING 项目 CI 环境变量中（`VERCEL_TOKEN`），不对外暴露。
 
 ## 项目结构
 
